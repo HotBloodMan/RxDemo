@@ -5,9 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import org.reactivestreams.Subscription;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import io.reactivex.Observable;
@@ -18,8 +15,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.internal.schedulers.SchedulerWhen;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 //                initData();
-                test();
+                test02();
             }
         });
     }
@@ -95,5 +92,25 @@ public class MainActivity extends AppCompatActivity {
            }
        });
     }
+
+    public void test02(){
+        final BehaviorSubject<Boolean> subject = BehaviorSubject.create();
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                for(int i=0;i<5;i++){
+                    e.onNext(i);
+                }
+                e.onComplete();
+            }
+        }).doOnComplete(new Action() {
+            @Override
+            public void run() throws Exception {
+                subject.onNext(true);
+            }
+        }).subscribe();
+
+    }
+
 
 }
